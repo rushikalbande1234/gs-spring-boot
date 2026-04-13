@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Build with Maven
+      run: mvn clean package
+
+    - name: Build Docker Image
+      run: docker build -t java-app:latest .
+
+    - name: Scan Image (Trivy)
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'java-app:latest'
+
+    - name: Login to DockerHub
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Push Image
+      run: |
+        docker tag java-app:latest your-dockerhub/java-app:latest
+        docker push your-dockerhub/java-app:latest
