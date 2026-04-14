@@ -22,7 +22,7 @@ jobs:
       run: mvn clean package
 
     - name: Build Docker Image
-      run: docker build -t java-app:latest .
+      run: docker build -t spring-boot-java-app:latest .
 
     - name: Scan Image (Trivy)
       uses: aquasecurity/trivy-action@master
@@ -34,5 +34,5 @@ jobs:
 
     - name: Push Image
       run: |
-        docker tag gs-spring-boot-java-app:latest rishi1996/gs-spring-boot-java-app:latest
-        docker push rishi1996/gs-spring-boot-java-app:latest
+        docker tag spring-boot-java-app:latest rishi1996/spring-boot-java-app:latest
+        docker push rishi1996/spring-boot-java-app:latest
